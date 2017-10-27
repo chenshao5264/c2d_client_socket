@@ -3,12 +3,28 @@
 
 #include "ByteConverter.h"
 
+#include "ProtocolStruct.h"
+
 using namespace std;
 
 
 
 int main()
 {
+    Player player;
+    player.age = 10;
+    player.name = "chenshao";
+
+    std::map<int, std::string> cards = { std::make_pair(1, "a"), std::make_pair(2, "b"), std::make_pair(3, "c") };
+    player.cards = cards;
+
+    ByteConvert buf;
+    buf << player;
+
+    Player p;
+    buf >> p;
+
+        /*
     ByteConvert buf;
     
     int a1 = 10;
@@ -34,7 +50,7 @@ int main()
     std::map<int, std::string> b8 = {};
     std::set<std::string> b9 = {};
     buf >> b1 >> b2 >> b3 >> b44 >> b5 >> b6 >> b7 >> b8 >> a9;
-     
+     */
     
     system("pause");
 

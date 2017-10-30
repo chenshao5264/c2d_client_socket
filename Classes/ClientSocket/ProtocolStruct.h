@@ -1,7 +1,7 @@
 #ifndef __Protocol_Struct_H__
 #define __Protocol_Struct_H__
 
-#include "CBuffer.h"
+#include "ByteBuffer.h"
 
 #define NET_PACKET(T) struct T
 

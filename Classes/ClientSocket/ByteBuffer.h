@@ -1,5 +1,5 @@
-#ifndef __Byte_Convert_H__
-#define __Byte_Convert_H__
+#ifndef __Byte_Buffer_H__
+#define __Byte_Buffer_H__
 
 #include <cstring>
 
@@ -100,6 +100,11 @@ public:
         size_t uLen = val.length();
         *this << uLen; // 先写入string的长度
         this->write((void*)(val.c_str()), uLen);
+        return *this;
+    }
+    CBuffer& operator<<(const std::string &val)
+    {
+        *this << const_cast<std::string&>(val);
         return *this;
     }
     // read
@@ -273,8 +278,7 @@ public:
         auto iter = val.begin();
         while (iter != val.end())
         {
-            // static_cast<T> 不加上这个无法正确重载，原因未知
-            *this << static_cast<T>(*iter++);
+            *this << (*iter++);
         }
         return *this;
     }

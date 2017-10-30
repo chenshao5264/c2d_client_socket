@@ -1,7 +1,7 @@
 #include <string>
 #include <iostream>
 
-#include "CBuffer.h"
+#include "ByteBuffer.h"
 
 #include "ProtocolStruct.h"
 

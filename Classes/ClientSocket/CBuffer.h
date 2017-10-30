@@ -28,17 +28,17 @@ public:
     short m_sLen;
 };
 
-class ByteConvert
+class CBuffer
 {
     enum { buflen = MAX_SR_LEN };
 
 public:
-    ByteConvert()
+    CBuffer()
     {
         this->reset();
     }
 
-    ~ByteConvert()
+    ~CBuffer()
     {
 
     }
@@ -46,33 +46,33 @@ public:
 private:
     void reset()
     {
-        memset(m_szSendData, 0x00, sizeof(m_szSendData));
-        m_pWriteData = m_szSendData;
-        m_pReadData  = m_szSendData;
-        m_len = 0;
-        m_num = 0;
+        memset(m_pData, 0x00, sizeof(m_pData));
+        m_pWriteData = m_pData;
+        m_pReadData  = m_pData;
+        m_iLen = 0;
+        m_num  = 0;
     }
 
     // 基础类型转为byte[]
-    void write(void* body, size_t uLen)
+    void write(void* body, int iLen)
     {
-        if ((buflen - m_len) > static_cast<int>(uLen))
+        if (buflen - m_iLen > iLen)
         {
-            memcpy(m_pWriteData, body, uLen);
-            m_pWriteData += uLen;
-            m_len += uLen;
+            memcpy(m_pWriteData, body, iLen);
+            m_pWriteData += iLen; // 指针地址偏移, 数据可以通过m_pData获取到
+            m_iLen += iLen;
             ++m_num;
         }
     }
 
     // byte[]转为基础类型
-    void read(void* pData, size_t nLen)
+    void read(void* pData, int iLen)
     {
-        if (nLen > 0 && m_len - nLen >= 0)
+        if (iLen > 0 && (m_iLen - iLen) >= 0)
         {
-            memcpy(pData, m_pReadData, nLen);
-            m_pReadData += nLen;
-            m_len -= nLen;
+            memcpy(pData, m_pReadData, iLen);
+            m_pReadData += iLen; // 指针地址偏移, 数据可以通过m_pData获取到
+            m_iLen -= iLen;
         }
     }
     
@@ -80,14 +80,14 @@ public:
     // 基础类型 write & read
     // write
     template <class T>
-    ByteConvert& operator<<(T &val)
+    CBuffer& operator<<(T &val)
     {
         this->write((void*)(&val), sizeof(val));
         return *this;
     }
     // read
     template <class T>
-    ByteConvert& operator>>(T &val)
+    CBuffer& operator>>(T &val)
     {
         this->read((void*)(&val), sizeof(val));
         return *this;
@@ -95,7 +95,7 @@ public:
 
     // string write & read
     // write
-    ByteConvert& operator<<(std::string &val)
+    CBuffer& operator<<(std::string &val)
     {
         size_t uLen = val.length();
         *this << uLen; // 先写入string的长度
@@ -103,7 +103,7 @@ public:
         return *this;
     }
     // read
-    ByteConvert& operator>>(std::string &val)
+    CBuffer& operator>>(std::string &val)
     {
         size_t uLen = 0;
         *this >> uLen;
@@ -111,14 +111,14 @@ public:
 
         size_t len1 = uLen * sizeof(char);
         m_pReadData += len1;
-        m_len -= len1;
+        m_iLen -= len1;
         return *this;
     }
 
     // array write & read
     // write
     template <class T>
-    ByteConvert& operator<<(PackageArray<T> &val)
+    CBuffer& operator<<(PackageArray<T> &val)
     {
         for (short i = 0; i < val.m_sLen; ++i)
         {
@@ -129,7 +129,7 @@ public:
 
     // read
     template <class T>
-    ByteConvert& operator >> (PackageArray<T> &val)
+    CBuffer& operator >> (PackageArray<T> &val)
     {
         for (short i = 0; i < val.m_sLen; i++)
         {
@@ -141,7 +141,7 @@ public:
     // vector write & read
     // write
     template <class T>
-    ByteConvert& operator<<(std::vector<T> &val)
+    CBuffer& operator<<(std::vector<T> &val)
     {
         size_t uLen = val.size();
         *this << uLen;
@@ -153,7 +153,7 @@ public:
     }
     // read
     template <class T>
-    ByteConvert& operator >> (std::vector<T> &val)
+    CBuffer& operator >> (std::vector<T> &val)
     {
         size_t uLen = 0;
         *this >> uLen;
@@ -169,7 +169,7 @@ public:
     // list write & read
     // write
     template <class T>
-    ByteConvert& operator<<(std::list<T> &val)
+    CBuffer& operator<<(std::list<T> &val)
     {
         size_t uLen = val.size();
         *this << uLen;
@@ -183,7 +183,7 @@ public:
     }
     // read
     template <class T>
-    ByteConvert& operator >> (std::list<T> &val)
+    CBuffer& operator >> (std::list<T> &val)
     {
         size_t uLen = 0;
         *this >> uLen;
@@ -199,12 +199,12 @@ public:
     // deque write & read
     // write
     template <class T>
-    ByteConvert& operator<<(std::deque<T> &val) 
+    CBuffer& operator<<(std::deque<T> &val) 
     {
         size_t uLen = val.size();
         *this << uLen;
-        auto iter = val.begin();
 
+        auto iter = val.begin();
         while (iter != val.end())
         {
             *this << (*iter++);
@@ -213,7 +213,7 @@ public:
     }
     // read
     template <class T>
-    ByteConvert& operator >> (std::deque<T> &val)
+    CBuffer& operator >> (std::deque<T> &val)
     {
         size_t uLen = 0;
         *this >> uLen;
@@ -229,7 +229,7 @@ public:
     // map write & read
     // write
     template <class _Kty, class _ty>
-    ByteConvert& operator << (std::map<_Kty, _ty> &val)
+    CBuffer& operator << (std::map<_Kty, _ty> &val)
     {
         size_t uLen = val.size();
         *this << uLen;
@@ -245,7 +245,7 @@ public:
     }
     // read
     template <class _Kty, class _ty>
-    ByteConvert& operator >> (std::map<_Kty, _ty> &val)
+    CBuffer& operator >> (std::map<_Kty, _ty> &val)
     {
         size_t uLen = 0;
         *this >> uLen;
@@ -265,7 +265,7 @@ public:
     // set write & read
     // write
     template <class T>
-    ByteConvert& operator<<(std::set<T> &val)
+    CBuffer& operator<<(std::set<T> &val)
     {
         size_t uLen = val.size();
         *this << uLen;
@@ -273,42 +273,48 @@ public:
         auto iter = val.begin();
         while (iter != val.end())
         {
-            *this << (*iter++);
+            // static_cast<T> 不加上这个无法正确重载，原因未知
+            *this << static_cast<T>(*iter++);
         }
         return *this;
     }
     // read
     template <class T>
-    ByteConvert& operator >> (std::set<T> &val)
+    CBuffer& operator >> (std::set<T> &val)
     {
         size_t uLen = 0;
         *this >> uLen;
 
-        auto iter = val.begin();
-        while (iter != val.end())
+        for (size_t i = 0; i < uLen; ++i)
         {
-            *this << (*iter++);
+            T t;
+            *this >> t;
+            val.insert(t);
         }
         return *this;
     }
 
 public:
-    // 返回当前缓冲区的长度
-    size_t getBufferLength()
+    char* getData()
     {
-        return m_len;
+        return m_pData;
+    }
+    // 返回当前缓冲区的长度
+    size_t getLength()
+    {
+        return m_iLen;
     }
 
     // 返回缓冲区中的包体个数
-    size_t getBufferCount()
+    size_t getCount()
     {
         return m_num;
     }
 
 private:
-    char		m_szSendData[buflen];			//一个装数据的BODY_BUF_LEN包长
+    char		m_pData[buflen];			//一个装数据的BODY_BUF_LEN包长
     char*		m_pWriteData;					//指向当前写入数据的字符串的首位置
-    int			m_len;							//当前长度
+    int			m_iLen;							//当前长度
     int			m_num;							//包体个数
     char*		m_pReadData;					//指向当前获取数据的字符串的首位置
 };

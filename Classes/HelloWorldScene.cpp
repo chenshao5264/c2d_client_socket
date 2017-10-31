@@ -1,8 +1,10 @@
 #include "HelloWorldScene.h"
 #include "SimpleAudioEngine.h"
 
-#include "ClientSocket/TCPSocket.h"
-#include "ClientSocket/SocketDelegate.h"
+#include "ClientNet/Socket/TCPSocket.h"
+#include "ClientNet/Socket/SocketDelegate.h"
+
+#include "ClientNet/NetPack.h"
 
 USING_NS_CC;
 
@@ -86,18 +88,33 @@ bool HelloWorld::init()
     sock->retain();
     sock->connect("127.0.0.1", 3000);
 
+    
+
+    // 反序列化
+//     Pack p1(pack.getData());
+//     LC_LOGIN_REQ req2;
+//     CBuffer buf2(p1.getBuffer());
+//     buf2 >> req2;
+
     return true;
 }
 
 
 void HelloWorld::menuCloseCallback(Ref* pSender)
 {
-    for (int i = 0; i < 10; ++i)
-    {
-        char* msg = "Hello, I am Client!";
-        sock->send(msg);
-    }
-    
+
+    LC_LOGIN_REQ req;
+    req.time = 55;
+    req.strAccount = "chenshao01";
+    req.strPwd = "1q2w3e";
+
+    // 序列化
+    CBuffer buf;
+    buf << req;
+    Pack pack(LC_LOGIN_REQ_P, buf.getData(), buf.getLength());
+
+    sock->send(pack);
+   
     //Close the cocos2d-x game scene and quit the application
     //Director::getInstance()->end();
 

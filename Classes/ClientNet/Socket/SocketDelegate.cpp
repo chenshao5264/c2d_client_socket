@@ -46,6 +46,4 @@ void SocketDelegate::onMessage(char *pMsg)
     CCLOG("proc msg method = %d", method);
 
     MsgPipe::getInstance()->appendOne(pack);
-
-    
 }

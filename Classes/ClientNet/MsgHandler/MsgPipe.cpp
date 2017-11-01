@@ -21,18 +21,6 @@ void MsgPipe::appendOne(Pack & pack)
     m_msgDeque.push_back(pack);
 }
 
-Pack MsgPipe::processOne()
-{
-    if (m_msgDeque.size() == 0)
-    {
-        return NULL;
-    }
-    Pack pack = m_msgDeque.at(0);
-    m_msgDeque.pop_front();
-
-    return pack;
-}
-
 void MsgPipe::start()
 {
     new ScheduleRunner();

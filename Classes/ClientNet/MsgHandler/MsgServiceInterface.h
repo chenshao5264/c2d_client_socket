@@ -9,6 +9,9 @@ public:
     IMsgService() {};
     virtual ~IMsgService() {};
 public:
+    /*
+        处理来自服务器的消息
+    */
     virtual void process(Pack& pack) = 0;
 };
 

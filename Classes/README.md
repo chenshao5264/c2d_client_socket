@@ -1,14 +1,17 @@
-####BSDSocket
-基于bsdsocket编写的一套api
+###基于cocos2d-x和BSDSocket的一套单线程网络框架
+目前缺少加密解密模块
 
-####TCPSocket
-对BSDSocket的封装
+#####ProtocolStruct.h
+网络传输的声明的结构体
 
-####SocketDelegate
-socket代理
+#####Protocol
+传输协议号
 
-####Crypto
-数据传输加密解密
+#####NetPack
+打包网络传输的数据
 
-####ByteConverter
-struct转byte,byte转struct，用于网络传输
+#####ByteBuffer
+结构体的序列化和反序列化
+
+###node_tcp_server
+基于nodejs的tcp服务器，测试使用

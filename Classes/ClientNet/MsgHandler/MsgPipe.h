@@ -17,16 +17,16 @@ public:
     ~MsgPipe();
 
 public:
+    // 添加新的来自服务器的消息
     void appendOne(Pack& pack);
 
-    Pack processOne();
-
+    // 启动消息处理
     void start();
-
+    // 暂定
     void pause();
+    // 恢复
     void recover();
     
-
     const std::deque<Pack>& getMsgDeque() const;
     bool isPause() const;
 private:

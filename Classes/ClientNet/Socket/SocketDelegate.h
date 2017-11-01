@@ -14,6 +14,7 @@ public:
     SocketDelegate();
     ~SocketDelegate();
 
+    // 超时回调
     void onConnectTimeout();
 
     void onConnected();
@@ -22,6 +23,7 @@ public:
 
     void onError();
 
+    // 接收消息回调
     void onMessage(char* pData);
 };
 

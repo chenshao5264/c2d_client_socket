@@ -8,7 +8,7 @@
 #define NET_BUFFER_OUT(T) inline CBuffer &operator<<(CBuffer &buf, T &obj)
 #define NET_BUFFER_IN(T)  inline CBuffer &operator>>(CBuffer &buf, T &obj)
 
-NET_PACKET(Player)
+NET_PACKET(PACKET_DEMO)
 {
     char day;
     int age;
@@ -20,12 +20,12 @@ NET_PACKET(Player)
     std::set<std::string> setCards;
 };
 
-NET_BUFFER_OUT(Player)
+NET_BUFFER_OUT(PACKET_DEMO)
 {
     return buf << obj.day << obj.age << obj.name << obj.mapCards << obj.vecCards << obj.listCards << obj.dequeCards << obj.setCards;
 }
 
-NET_BUFFER_IN(Player)
+NET_BUFFER_IN(PACKET_DEMO)
 {
     return buf >> obj.day >> obj.age >> obj.name >> obj.mapCards >> obj.vecCards >> obj.listCards >> obj.dequeCards >> obj.setCards;
 }

@@ -6,6 +6,8 @@
 
 #include "ClientNet/NetPack.h"
 
+#include "ClientNet/MsgHandler/MsgPipe.h"
+
 USING_NS_CC;
 
 Scene* HelloWorld::createScene()
@@ -81,20 +83,12 @@ bool HelloWorld::init()
     this->addChild(sprite, 0);
 
     sock = TCPSocket::create();
-    auto delegate = SocketDelegate::create();
-    delegate->retain();
-    sock->setDelegate(delegate);
-
     sock->retain();
+    sock->setDelegate(SOCKET_DELEGATE_INSTANCE);
     sock->connect("127.0.0.1", 3000);
 
+    MsgPipe::getInstance()->start();
     
-
-    // 反序列化
-//     Pack p1(pack.getData());
-//     LC_LOGIN_REQ req2;
-//     CBuffer buf2(p1.getBuffer());
-//     buf2 >> req2;
 
     return true;
 }
@@ -103,15 +97,20 @@ bool HelloWorld::init()
 void HelloWorld::menuCloseCallback(Ref* pSender)
 {
 
-    LC_LOGIN_REQ req;
-    req.time = 55;
-    req.strAccount = "chenshao01";
-    req.strPwd = "1q2w3e";
+    PACKET_DEMO req;
+    req.day = 1;
+    req.age = 99;
+    req.dequeCards = { "deque1", "deque2", "deque3" };
+    req.listCards = { "list1", "list2", "list3" };
+    req.mapCards = { std::make_pair(1, "map1"), std::make_pair(2, "map2"), std::make_pair(3, "map3") };
+    req.name = "辰少01";
+    req.setCards = { "set1", "set2" };
+    req.vecCards = { "vec1", "vec2", "vec3", "vec4" };
 
     // 序列化
     CBuffer buf;
     buf << req;
-    Pack pack(LC_LOGIN_REQ_P, buf.getData(), buf.getLength());
+    Pack pack(PACKET_DEMO_P, buf.getData(), buf.getLength());
 
     sock->send(pack);
    

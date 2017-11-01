@@ -3,26 +3,29 @@
 
 #include "cocos2d.h"
 
-class SocketDelegate : public cocos2d::Ref
+#include "Public/Singleton.h"
+
+/*
+    单列的socket委托类
+*/
+class SocketDelegate : public CSingleton<SocketDelegate>
 {
-protected:
-    SocketDelegate();
-
 public:
-    virtual ~SocketDelegate();
+    SocketDelegate();
+    ~SocketDelegate();
 
-    CREATE_FUNC(SocketDelegate);
-    bool init();
+    void onConnectTimeout();
 
-    virtual void onConnectTimeout();
+    void onConnected();
 
-    virtual void onConnected();
+    void onDisconnected();
 
-    virtual void onDisconnected();
+    void onError();
 
-    virtual void onError();
-
-    virtual void onMessage(char* pData);
+    void onMessage(char* pData);
 };
+
+
+#define SOCKET_DELEGATE_INSTANCE SocketDelegate::getInstance()
 
 #endif

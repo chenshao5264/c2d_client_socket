@@ -1,6 +1,7 @@
 #include "SocketDelegate.h"
 
 #include "ClientNet/NetPack.h"
+#include "ClientNet/MsgHandler/MsgPipe.h"
 
 SocketDelegate::SocketDelegate()
 {
@@ -8,11 +9,7 @@ SocketDelegate::SocketDelegate()
 
 SocketDelegate::~SocketDelegate()
 {
-}
-
-bool SocketDelegate::init()
-{
-    return true;
+    
 }
 
 void SocketDelegate::onConnectTimeout()
@@ -37,10 +34,18 @@ void SocketDelegate::onError()
 
 void SocketDelegate::onMessage(char *pMsg)
 {
-    CCLOG("recv msg = %s", pMsg);
+    Pack pack(pMsg);
 
-    Pack p1(pMsg);
-    LC_LOGIN_REQ req2;
-    CBuffer buf2(p1.getBuffer());
-    buf2 >> req2;
+    int method = pack.getMethod();
+    if (method == 0)
+    {
+        CCLOG("Invalid protocol!");
+        return;
+    }
+
+    CCLOG("proc msg method = %d", method);
+
+    MsgPipe::getInstance()->appendOne(pack);
+
+    
 }

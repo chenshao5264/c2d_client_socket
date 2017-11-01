@@ -11,14 +11,21 @@ struct PackHead
     User_ID iUId;
     int opCode;
     size_t bodyLength;
-};
 
+    PackHead()
+        : iUId(0)
+        , opCode(0)
+        , bodyLength(0)
+    {
+
+    }
+};
 
 typedef char* PackBody;
 
 const size_t PACK_HEAD_LEN = sizeof(PackHead);
 
-const int        MAX_PACK_LEN = (1024 * 8);
+const int MAX_PACK_LEN = (1024 * 8);
 
 class Pack
 {
@@ -33,6 +40,7 @@ public:
     }
 
     // 指定长度字符串作为参数的构造函数
+    // 主要用于接收服务器的字节流，构造成Pack
     Pack(char* pMsg)
     {
         this->reset();
@@ -40,9 +48,15 @@ public:
         if (pMsg != NULL)
         {
             m_packHead = *(PackHead*)pMsg;
-            if (m_packHead.bodyLength > 0)
+            if (m_packHead.bodyLength > 0 && m_packHead.bodyLength < MAX_PACK_LEN)
             {
                 m_bodyBuf.writeToBuf(pMsg + PACK_HEAD_LEN, m_packHead.bodyLength);
+            } 
+            else
+            {
+                m_packHead.bodyLength = 0;
+                m_packHead.iUId       = 0;
+                m_packHead.opCode     = 0;
             }
         }
     }
@@ -71,12 +85,13 @@ private:
     {
         memset(&m_packHead, 0, PACK_HEAD_LEN);
         memset(m_pMsg, 0, sizeof(m_pMsg));
+        m_iBodyLen = 0;
     }
 
 public:
+    // 拼合head和body的数据，用于网络传输
     char* getData()
     {
-        
         int idx = 0;
         m_packHead.bodyLength = m_iBodyLen;
         memcpy(&m_pMsg[idx], &m_packHead, PACK_HEAD_LEN);
@@ -107,11 +122,6 @@ public:
     {
         m_bodyBuf.writeToBuf(pBody, len);
         m_iBodyLen = len;
-    }
-
-    char* getBody()
-    {
-        return m_bodyBuf.getData();
     }
 
     CBuffer getBuffer()

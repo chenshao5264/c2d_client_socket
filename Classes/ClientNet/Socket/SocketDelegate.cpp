@@ -1,7 +1,7 @@
 #include "SocketDelegate.h"
 
 #include "ClientNet/NetPack.h"
-#include "ClientNet/MsgHandler/MsgPipe.h"
+#include "ClientNet/MsgService/MsgPipe.h"
 
 SocketDelegate::SocketDelegate()
 {
@@ -9,7 +9,7 @@ SocketDelegate::SocketDelegate()
 
 SocketDelegate::~SocketDelegate()
 {
-    
+
 }
 
 void SocketDelegate::onConnectTimeout()

@@ -18,6 +18,12 @@ NET_PACKET(PACKET_DEMO)
     std::list<std::string> listCards;
     std::deque<std::string> dequeCards;
     std::set<std::string> setCards;
+    PACKET_DEMO()
+        : day(0)
+        , age(0)
+    {
+
+    }
 };
 
 NET_BUFFER_OUT(PACKET_DEMO)

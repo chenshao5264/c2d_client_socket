@@ -12,11 +12,8 @@ using namespace cocos2d;
 TCPSocket::TCPSocket()
     : m_eSocketStatus(eSocketIoClosed)
     , m_pDelegate(nullptr)
-    , m_fHeartElapsedTime(.0f)
     , m_fConnectingElapsedTime(.0f)
     , m_pReadBuffer(new char[SOCKET_READ_BUFFER_SIZE])
-    //, m_pSendBuffer(new char[SOCKET_READ_BUFFER_SIZE])
-    , m_iSendSize(0)
     , m_pIP(nullptr)
     , m_iPort(0)
 {
@@ -25,7 +22,6 @@ TCPSocket::TCPSocket()
 TCPSocket::~TCPSocket()
 {
     delete[] m_pReadBuffer;
-    //delete[] m_pSendBuffer;
 
     m_pSocket->close();
     Director::getInstance()->getScheduler()->unschedule(CC_SCHEDULE_SELECTOR(TCPSocket::onRunSchedule), this);
@@ -45,7 +41,6 @@ void TCPSocket::setDelegate(SocketDelegate * delegate)
 
 void TCPSocket::connect(const char * ip, unsigned short port)
 {
-    m_iSendSize = 0;
     if (m_eSocketStatus != eSocketConnected && m_eSocketStatus != eSocketConnecting)
     {
         m_pSocket = new (std::nothrow) BSDSocket();

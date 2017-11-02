@@ -8,8 +8,8 @@
 
 class BSDSocket;
 class SocketDelegate;
-
 class Pack;
+
 class TCPSocket : public cocos2d::Ref
 {
 protected:
@@ -41,17 +41,12 @@ private:
     bool doWrite(char* pData, size_t uLen);
 
 private:
-    SocketDelegate* m_pDelegate;
-    BSDSocket*      m_pSocket;
-    ESocketStatus   m_eSocketStatus;
-   
-    float m_fHeartElapsedTime;
-    float m_fConnectingElapsedTime;
+    SocketDelegate*  m_pDelegate;
+    BSDSocket*       m_pSocket;
+    ESocketStatus    m_eSocketStatus;
 
-    char* m_pReadBuffer;
-    //char* m_pSendBuffer;
-
-    int m_iSendSize;
+    float            m_fConnectingElapsedTime;
+    char*            m_pReadBuffer;
 
     char*            m_pIP;
     unsigned short   m_iPort;

@@ -6,7 +6,7 @@
 
 #include "ClientNet/NetPack.h"
 
-#include "ClientNet/MsgHandler/MsgPipe.h"
+#include "ClientNet/MsgService/MsgPipe.h"
 
 USING_NS_CC;
 

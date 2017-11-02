@@ -53,6 +53,7 @@ void MsgPipe::process(Pack & pack)
     {
         CBuffer buf(pack.getBuffer());
         PACKET_DEMO req;
+        buf >> req;
         return;
     }
 

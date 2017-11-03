@@ -1,20 +1,18 @@
-#include "HelloWorldScene.h"
-#include "SimpleAudioEngine.h"
 #include "LoginScene.h"
+#include "SimpleAudioEngine.h"
+#include "HelloWorldScene.h"
 
 #include "ClientNet/Socket/TCPManager.h"
 
-#include "CCEx/EventDispatcherEx.hpp"
-
 USING_NS_CC;
 
-Scene* HelloWorld::createScene()
+Scene* LoginScene::createScene()
 {
     // 'scene' is an autorelease object
     auto scene = Scene::create();
     
     // 'layer' is an autorelease object
-    auto layer = HelloWorld::create();
+    auto layer = LoginScene::create();
 
     // add layer as a child to scene
     scene->addChild(layer);
@@ -25,7 +23,7 @@ Scene* HelloWorld::createScene()
 
 
 // on "init" you need to initialize your instance
-bool HelloWorld::init()
+bool LoginScene::init()
 {
     //////////////////////////////
     // 1. super init first
@@ -45,7 +43,7 @@ bool HelloWorld::init()
     auto closeItem1 = MenuItemImage::create(
                                            "CloseNormal.png",
                                            "CloseSelected.png",
-                                           CC_CALLBACK_1(HelloWorld::menuCloseCallback, this));
+                                           CC_CALLBACK_1(LoginScene::menuCloseCallback, this));
     
     closeItem1->setPosition(Vec2(origin.x + visibleSize.width - closeItem1->getContentSize().width/2 ,
                                 origin.y + closeItem1->getContentSize().height/2));
@@ -54,26 +52,17 @@ bool HelloWorld::init()
     auto closeItem2 = MenuItemImage::create(
         "CloseNormal.png",
         "CloseSelected.png",
-        CC_CALLBACK_1(HelloWorld::menuCloseCallback, this));
+        CC_CALLBACK_1(LoginScene::menuCloseCallback, this));
 
     closeItem2->setPosition(Vec2(origin.x + visibleSize.width - closeItem2->getContentSize().width / 2,
         origin.y + closeItem2->getContentSize().height / 2 + 100));
 
-    auto closeItem3 = MenuItemImage::create(
-        "CloseNormal.png",
-        "CloseSelected.png",
-        CC_CALLBACK_1(HelloWorld::menuCloseCallback, this));
-
-    closeItem3->setPosition(Vec2(origin.x + visibleSize.width - closeItem3->getContentSize().width / 2,
-        origin.y + closeItem3->getContentSize().height / 2 + 200));
-
 
     closeItem1->setTag(1);
     closeItem2->setTag(2);
-    closeItem3->setTag(3);
 
     // create menu, it's an autorelease object
-    auto menu = Menu::create(closeItem1, closeItem2, closeItem3, NULL);
+    auto menu = Menu::create(closeItem1, closeItem2, NULL);
     menu->setPosition(Vec2::ZERO);
     this->addChild(menu, 1);
 
@@ -100,39 +89,25 @@ bool HelloWorld::init()
 
     // add the sprite as a child to this layer
     this->addChild(sprite, 0);
-
-    TCPManager::getInstance()->makeConnect1("127.0.0.1", 3000);
     
 
-    EventDispatcherEx::getInstance()->addCustomEventListener(this, e_do_demo_after, [=](cocos2d::EventCustom* evt)
-    {
-        CCLOG("do_demo_after");
-    });
 
 
     return true;
 }
 
 
-void HelloWorld::menuCloseCallback(Ref* pSender)
+void LoginScene::menuCloseCallback(Ref* pSender)
 {
 
     auto btn = dynamic_cast<MenuItem*>(pSender);
     if (btn->getTag() == 1)
     {
         CCLOG("1111");
-        TCPManager::getInstance()->sendLoginReq();
-    }
-    else if(btn->getTag() == 2)
-    {
-        CCLOG("2222");
-        EventDispatcherEx::getInstance()->removeEventListenerForTarget(this);
-    }
-    else if (btn->getTag() == 3)
-    {
-        auto scene = LoginScene::createScene();
+        auto scene = HelloWorld::createScene();
         Director::getInstance()->replaceScene(scene);
     }
+
 
     
    
@@ -149,15 +124,4 @@ void HelloWorld::menuCloseCallback(Ref* pSender)
     //_eventDispatcher->dispatchEvent(&customEndEvent);
     
     
-}
-
-void HelloWorld::onEnter()
-{
-    Layer::onEnter();
-}
-
-void HelloWorld::onExit()
-{
-    EventDispatcherEx::getInstance()->removeEventListenerForTarget(this);
-    Layer::onExit();
 }

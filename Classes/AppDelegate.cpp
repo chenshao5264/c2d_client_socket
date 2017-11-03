@@ -15,6 +15,7 @@ AppDelegate::AppDelegate()
 
 AppDelegate::~AppDelegate() 
 {
+    AppHelper::getInstance()->didShuted();
 }
 
 // if you want a different context, modify the value of glContextAttrs

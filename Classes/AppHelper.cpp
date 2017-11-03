@@ -16,3 +16,8 @@ void AppHelper::didLaunched()
     // 创建处理服务器消息的服务
     Service::createServices();
 }
+
+void AppHelper::didShuted()
+{
+  
+}

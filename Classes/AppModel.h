@@ -7,10 +7,7 @@
 
 #include "ClientNet/ProtocolStruct.h"
 
-enum EvtName
-{
-    e_do_demo_after = 0,
-};
+
 
 class AppModel : public CSingleton<AppModel>
 {

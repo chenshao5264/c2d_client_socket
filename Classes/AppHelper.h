@@ -12,7 +12,10 @@ public:
     
     ~AppHelper();
 
+    // app 第一次启动
     void didLaunched();
+    // app 关闭
+    void didShuted();
 };
 
 #endif

@@ -1,4 +1,6 @@
 #include "AppModel.h"
+#include "Public/Utils.hpp"
+#include "Defines/Define.h"
 
 using namespace cocos2d;
 
@@ -13,9 +15,9 @@ AppModel::~AppModel()
 
 void AppModel::doDemoMsg(const PACKET_DEMO & req)
 {
-    EventCustom customEndEvent("do_demo_after");
-    customEndEvent.setUserData((void*)(&req));
-    Director::getInstance()->getEventDispatcher()->dispatchEvent(&customEndEvent);
+    EventCustom customEvent(Utils::toString(e_do_demo_after));
+    customEvent.setUserData((void*)(&req));
+    Director::getInstance()->getEventDispatcher()->dispatchEvent(&customEvent);
 }
 
 void AppModel::doLoginMsg(const LC_LOGIN_REQ& req)

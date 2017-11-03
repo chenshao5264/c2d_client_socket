@@ -7,7 +7,7 @@
 
 enum Protocol
 {
-    PACKET_DEMO_P  = 0xffffff,                // 测试协议
+    PACKET_DEMO_P  = 1999,                // 测试协议
     INVALID_P      = 0,                       // 无效协议 
     LOGIN_START_P  = PROTOCOL_LC_START,       // 登录协议开始
     LC_LOGIN_REQ_P,                           // 登录请求

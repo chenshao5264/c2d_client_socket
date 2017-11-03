@@ -40,4 +40,7 @@ private:
 template<class T>
 T* CSingleton<T>::m_pInstance = nullptr;
 
+#undef FRIEND_SINGLETON_CLASS
+#define FRIEND_SINGLETON_CLASS(clsName) friend class CSingleton<clsName>
+
 #endif

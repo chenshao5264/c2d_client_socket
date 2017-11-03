@@ -25,6 +25,7 @@ public:
     void setDelegate(SocketDelegate* delegate);
 
     void connect(const char* ip, unsigned short port);
+    void disconnect();
 
     /*
         重连上一次的ip

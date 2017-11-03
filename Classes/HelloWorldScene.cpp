@@ -1,12 +1,8 @@
 #include "HelloWorldScene.h"
 #include "SimpleAudioEngine.h"
 
-#include "ClientNet/Socket/TCPSocket.h"
-#include "ClientNet/Socket/SocketDelegate.h"
 
-#include "ClientNet/NetPack.h"
-
-#include "ClientNet/MsgService/MsgPipe.h"
+#include "ClientNet/Socket/TCPManager.h"
 
 USING_NS_CC;
 
@@ -25,7 +21,6 @@ Scene* HelloWorld::createScene()
     return scene;
 }
 
-TCPSocket* sock = nullptr;
 
 // on "init" you need to initialize your instance
 bool HelloWorld::init()
@@ -82,13 +77,13 @@ bool HelloWorld::init()
     // add the sprite as a child to this layer
     this->addChild(sprite, 0);
 
-    sock = TCPSocket::create();
-    sock->retain();
-    sock->setDelegate(SOCKET_DELEGATE_INSTANCE);
-    sock->connect("127.0.0.1", 3000);
-
-    MsgPipe::getInstance()->start();
+    TCPManager::getInstance()->makeConnect1("127.0.0.1", 3000);
     
+
+    Director::getInstance()->getEventDispatcher()->addCustomEventListener("do_demo_after", [=](cocos2d::EventCustom* evt)
+    {
+        CCLOG("do_demo_after");
+    });
 
     return true;
 }
@@ -96,28 +91,12 @@ bool HelloWorld::init()
 
 void HelloWorld::menuCloseCallback(Ref* pSender)
 {
-
-    PACKET_DEMO req;
-    req.day = 1;
-    req.age = 99;
-    req.dequeCards = { "deque1", "deque2", "deque3" };
-    req.listCards = { "list1", "list2", "list3" };
-    req.mapCards = { std::make_pair(1, "map1"), std::make_pair(2, "map2"), std::make_pair(3, "map3") };
-    req.name = "≥Ω…Ÿ01";
-    req.setCards = { "set1", "set2" };
-    req.vecCards = { "vec1", "vec2", "vec3", "vec4" };
-
-    // –Ú¡–ªØ
-    CBuffer buf;
-    buf << req;
-    Pack pack(PACKET_DEMO_P, buf.getData(), buf.getLength());
-
-    sock->send(pack);
+    TCPManager::getInstance()->sendLoginReq();
    
     //Close the cocos2d-x game scene and quit the application
     //Director::getInstance()->end();
 
-    #if (CC_TARGET_PLATFORM == CC_PLATFORM_IOS)
+#if (CC_TARGET_PLATFORM == CC_PLATFORM_IOS)
     //exit(0);
 #endif
     

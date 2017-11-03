@@ -61,6 +61,11 @@ void TCPSocket::connect(const char * ip, unsigned short port)
     }
 }
 
+void TCPSocket::disconnect()
+{
+    m_pSocket->disconnect();
+}
+
 void TCPSocket::reConnect()
 {
     if (m_eSocketStatus == eSocketConnecting || m_eSocketStatus == eSocketConnected)

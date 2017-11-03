@@ -10,8 +10,11 @@
 */
 class SocketDelegate : public CSingleton<SocketDelegate>
 {
-public:
+    FRIEND_SINGLETON_CLASS(SocketDelegate);
+private:
     SocketDelegate();
+public:
+    
     ~SocketDelegate();
 
     // ³¬Ê±»Øµ÷

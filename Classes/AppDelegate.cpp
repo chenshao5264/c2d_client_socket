@@ -1,5 +1,6 @@
 #include "AppDelegate.h"
 #include "HelloWorldScene.h"
+#include "AppHelper.h"
 
 USING_NS_CC;
 
@@ -79,6 +80,8 @@ bool AppDelegate::applicationDidFinishLaunching() {
 
     // run
     director->runWithScene(scene);
+
+    AppHelper::getInstance()->didLaunched();
 
     return true;
 }

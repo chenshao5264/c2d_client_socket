@@ -1,6 +1,6 @@
 #include "MsgPipe.h"
-
-#include "LoginService.h"
+#include "Service.hpp"
+#include "AppModel.h"
 
 using namespace cocos2d;
 
@@ -8,12 +8,18 @@ MsgPipe::MsgPipe()
     : m_isPause(false)
 
 {
-    m_pLoginService = new LoginService();
+    
 }
 
 MsgPipe::~MsgPipe()
 {
-    
+    for (const auto& it : m_setMsgService)
+    {
+        if (it)
+        {
+            delete it;
+        }
+    }
 }
 
 void MsgPipe::appendOne(Pack & pack)
@@ -37,33 +43,46 @@ void MsgPipe::recover()
     m_isPause = false;
 }
 
-const std::deque<Pack>& MsgPipe::getMsgDeque() const
+void MsgPipe::registService(IMsgService *service)
 {
-    return m_msgDeque;
-}
-
-bool MsgPipe::isPause() const
-{
-    return m_isPause;
-}
-
-void MsgPipe::process(Pack & pack)
-{
-    if (pack.getMethod() == PACKET_DEMO_P)
+    if (service)
     {
-        CBuffer buf(pack.getBuffer());
-        PACKET_DEMO req;
-        buf >> req;
+        m_setMsgService.insert(service);
+    }
+}
+
+void MsgPipe::unRegistService(IMsgService *service)
+{
+   auto iter =  m_setMsgService.find(service);
+   if (iter != m_setMsgService.end())
+   {
+       m_setMsgService.erase(iter);
+   }
+}
+
+void MsgPipe::processOne()
+{
+    if (this->isPause())
+    {
         return;
     }
 
-    int method = pack.getMethod();
-    if (method >= PROTOCOL_LC_START && method < PROTOCOL_LC_END)
+    if (m_msgDeque.size() == 0)
     {
-        m_pLoginService->process(pack);
+        return;
+    }
+
+    Pack pack = m_msgDeque.at(0);
+    m_msgDeque.pop_front();
+
+    for (const auto& it : m_setMsgService)
+    {
+        if (it && it->process(pack))
+        {
+            break;
+        }
     }
 }
-
 
 //
 MsgPipe::ScheduleRunner::ScheduleRunner()
@@ -78,20 +97,7 @@ MsgPipe::ScheduleRunner::~ScheduleRunner()
 
 void MsgPipe::ScheduleRunner::update(float dt)
 {
-    if (MsgPipe::getInstance()->isPause())
-    {
-        return;
-    }
-
-    auto msgDeque = MsgPipe::getInstance()->getMsgDeque();
-    if (msgDeque.size() == 0)
-    {
-        return;
-    }
-
-    Pack pack = msgDeque.at(0);
-    msgDeque.pop_front();
-    MsgPipe::getInstance()->process(pack);
+    MsgPipe::getInstance()->processOne();
 }
 
 
